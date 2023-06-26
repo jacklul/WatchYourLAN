@@ -24,7 +24,7 @@ type Conf struct {
 	Color    string
 	IgnoreIP string
 	LogLevel string
-	BootPath string
+	NodePath string
 	Icon     string
 }
 
@@ -34,5 +34,4 @@ type GuiData struct {
 	Hosts   []Host
 	Themes  []string
 	Version string
-	Release string
 }
