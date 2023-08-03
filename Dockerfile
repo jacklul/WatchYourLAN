@@ -9,7 +9,7 @@ FROM alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache tzdata arp-scan \
+RUN apk add --no-cache arp-scan tzdata \
     && mkdir /data
 
 COPY --from=builder /WatchYourLAN /app/
