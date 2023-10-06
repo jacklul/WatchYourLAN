@@ -28,6 +28,11 @@ jobs:
         repository: 'aceberg/WatchYourLAN'
         ref: 'main'
         path: "upstream"
+        
+    - name: Setup Go 1.21.x
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.x'
 
     - run: bash builder/build/ci/build_multiarch.sh ${{ github.ref_name }}
 
