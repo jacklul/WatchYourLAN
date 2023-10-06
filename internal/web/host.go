@@ -19,9 +19,9 @@ func delHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("INFO: delete host ID =", id)
 
-	db.Delete(AppConfig.DbPath, uint16(id))
+	db.Delete(AppConfig.DbPath, id)
 
-	http.Redirect(w, r, "/home/", 302)
+	http.Redirect(w, r, "/", 302)
 }
 
 func hostHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,10 +35,8 @@ func hostHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	check.IfError(err)
 
-	id16 := uint16(id)
-
 	for _, oneHost := range AllHosts {
-		if id16 == oneHost.ID {
+		if id == oneHost.ID {
 			host = oneHost
 			break
 		}
@@ -50,6 +48,13 @@ func hostHandler(w http.ResponseWriter, r *http.Request) {
 	check.IfError(err)
 
 	guiData.Themes = addr
+
+	history := db.SelectHist(AppConfig.DbPath)
+	for _, hist := range history {
+		if hist.Host == id {
+			guiData.Hist = append(guiData.Hist, hist)
+		}
+	}
 
 	execTemplate(w, "host", guiData)
 }

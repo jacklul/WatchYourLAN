@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/aceberg/WatchYourLAN/internal/db"
 	"github.com/aceberg/WatchYourLAN/internal/models"
 )
 
@@ -73,7 +72,7 @@ func sortHandler(w http.ResponseWriter, r *http.Request) {
 	case "known-down":
 		sortByField("desc", "Known")
 	default:
-		AllHosts = db.Select(AppConfig.DbPath)
+		updateAllHosts()
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)

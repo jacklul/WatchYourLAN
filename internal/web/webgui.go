@@ -22,35 +22,37 @@ func Gui(configPath, nodePath string) {
 
 	address := AppConfig.GuiIP + ":" + AppConfig.GuiPort
 
-	db.Create(AppConfig.DbPath)
-
 	QuitScan = make(chan bool)
-
 	go scan.Start(AppConfig, QuitScan)
+	go trimHistoryRoutine() // trim-history.go
 
-	AllHosts = db.Select(AppConfig.DbPath)
+	updateAllHosts() // webgui.go
 
 	log.Println("=================================== ")
 	log.Printf("Web GUI at http://%s", address)
 	log.Println("=================================== ")
 
-	http.HandleFunc("/login/", loginHandler)
+	http.HandleFunc("/login/", loginHandler) // login.go
 
 	http.HandleFunc("/", auth.Auth(indexHandler, &authConf))
-	http.HandleFunc("/auth_conf/", auth.Auth(authConfHandler, &authConf))
-	http.HandleFunc("/auth_save/", auth.Auth(saveAuthHandler, &authConf))
-	http.HandleFunc("/clear/", auth.Auth(clearHandler, &authConf))
-	http.HandleFunc("/config/", auth.Auth(configHandler, &authConf))
-	http.HandleFunc("/del_host/", auth.Auth(delHandler, &authConf))
-	http.HandleFunc("/home/", auth.Auth(homeHandler, &authConf))
-	http.HandleFunc("/host/", auth.Auth(hostHandler, &authConf))
-	http.HandleFunc("/line/", auth.Auth(lineHandler, &authConf))
-	http.HandleFunc("/port_scan/", auth.Auth(portHandler, &authConf))
-	http.HandleFunc("/save_config/", auth.Auth(saveConfigHandler, &authConf))
-	http.HandleFunc("/search_hosts/", auth.Auth(searchHandler, &authConf))
-	http.HandleFunc("/sort_hosts/", auth.Auth(sortHandler, &authConf))
-	http.HandleFunc("/test_notify/", auth.Auth(testNotifyHandler, &authConf))
-	http.HandleFunc("/update_host/", auth.Auth(updateHandler, &authConf))
+	http.HandleFunc("/auth_conf/", auth.Auth(authConfHandler, &authConf))     // auth.go
+	http.HandleFunc("/auth_save/", auth.Auth(saveAuthHandler, &authConf))     // auth.go
+	http.HandleFunc("/clear/", auth.Auth(clearHandler, &authConf))            // config.go
+	http.HandleFunc("/config/", auth.Auth(configHandler, &authConf))          // config.go
+	http.HandleFunc("/del_host/", auth.Auth(delHandler, &authConf))           // host.go
+	http.HandleFunc("/history/", auth.Auth(historyHandler, &authConf))        // history.go
+	http.HandleFunc("/host/", auth.Auth(hostHandler, &authConf))              // host.go
+	http.HandleFunc("/line/", auth.Auth(lineHandler, &authConf))              // line.go
+	http.HandleFunc("/port_scan/", auth.Auth(portHandler, &authConf))         // port.go
+	http.HandleFunc("/save_config/", auth.Auth(saveConfigHandler, &authConf)) // config.go
+	http.HandleFunc("/search_hosts/", auth.Auth(searchHandler, &authConf))    // search.go
+	http.HandleFunc("/sort_hosts/", auth.Auth(sortHandler, &authConf))        // sort.go
+	http.HandleFunc("/test_notify/", auth.Auth(testNotifyHandler, &authConf)) // config.go
+	http.HandleFunc("/update_host/", auth.Auth(updateHandler, &authConf))     // update.go
 	err := http.ListenAndServe(address, nil)
 	check.IfError(err)
+}
+
+func updateAllHosts() {
+	AllHosts = db.Select(AppConfig.DbPath)
 }
