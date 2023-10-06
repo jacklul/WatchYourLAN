@@ -57,7 +57,7 @@ Version: $(echo "$VERSION" | sed 's/v*//')
 Section: utils
 Priority: optional
 Architecture: $DEBARCH
-Depends: arp-scan
+Depends: arp-scan, tzdata
 Maintainer: aceberg <aceberg_a@proton.me>
 Description: Lightweight network IP scanner with web GUI
 " > "$PKGDIR-deb/DEBIAN/control"
